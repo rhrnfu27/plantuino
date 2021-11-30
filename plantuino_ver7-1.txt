@@ -1,0 +1,57 @@
+#include <Adafruit_NeoPixel.h>
+
+#define Sensor A0
+#define PIN 2
+#define NUMPIXELS 24
+
+Adafruit_NeoPixel pixels =
+  Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+int delayval = 500;
+
+
+void setup() {
+  Serial.begin(9600);
+  pixels.begin();
+}
+
+
+void loop() {
+  int Water = analogRead(Sensor);
+  int Soil_Water = map(Water, 1023, 295, 0, 100);
+
+
+
+  Serial.print("Water=");
+  Serial.print(Water);
+  Serial.print("Soil Water=");
+  Serial.print(Soil_Water);
+  Serial.println("%");
+  delay(5000);
+
+  if (Soil_Water >= 70) {
+    
+    for (int i = 0; i < NUMPIXELS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 255, 0));
+      pixels.show();
+      delay(delayval);
+    }
+  }
+
+  if ((Soil_Water < 70) && (Soil_Water >= 30)) {
+    for (int i = 0; i < NUMPIXELS; i++) {
+      pixels.setPixelColor(i, pixels.Color(0, 0, 255));
+      pixels.show();
+      delay(delayval);
+    }
+  }
+
+  if (Soil_Water < 30) {
+    for (int i = 0; i < NUMPIXELS; i++) {
+      pixels.setPixelColor(i, pixels.Color(255, 0, 0));
+      pixels.show();
+      delay(delayval);
+    }
+  }
+
+}
